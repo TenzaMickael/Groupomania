@@ -23,12 +23,13 @@ require('dotenv').config();
 
 
 //* *****Déclaration des routes***** *//
-
-// On importe la route dédiée aux utilisateurs
-//const userRoutes = require('./routes/user');
-
 // On importe la route dédiée aux sauces
 const postRoutes = require('./routes/posts');
+
+// On importe la route dédiée aux utilisateurs
+const userRoutes = require('./routes/users');
+
+
 
 
 
@@ -59,7 +60,7 @@ app.use('/images', express.static(path.join(__dirname, 'images' )));
 app.use('/api/posts', postRoutes);
 
 // Routes dédiées aux users
-//app.use('/api/auth', userRoutes);
+app.use('/api/users', userRoutes);
 
 
 // Export de l'application express pour y accéder depuis server.js

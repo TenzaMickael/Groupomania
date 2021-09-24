@@ -13,5 +13,6 @@ const postCtrl = require('../controllers/posts');
 
 // Route qui permet de créer un post
 router.post('/', postCtrl.createPost);
+router.get('/:id', postCtrl.getOnePost);
 
 module.exports = router;
