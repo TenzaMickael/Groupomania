@@ -12,23 +12,25 @@ exports.createPost = (req, res, next) => {
                 res.status(500).json({ message:"Post non crée" , error:err })
             }
             res.status(201).json({message:"Post crée" , results});
-        })
+        });
 };
 
 
 /* ***** Modification d'un post ***** */ 
 exports.modifyPost = (req, res, next) => {
 
-   
-        connection.query ('update posts set title = ?, publication = ?,  where id = ?', [req.body.title, req.body.publication, req.params.id],
+            connection.query ('update posts set title = ?, publication = ?  where req.body.user_id = id', [req.body.title, req.body.publication, req.params.id],
         function (err, results) {
+         console.log(results)
             if (err) {
                 res.status(500).json({message:"Post non modifié" , error:err})
+                console.log(req.params.id)
             }
             res.status(200).json({ message:"Post modifié"});
+            console.log(req.params.id)
+           
         })
-    
-}
+};
 
 
 /* ***** Suppression d'un post ***** */
@@ -79,6 +81,21 @@ exports.getOnePost = (req, res, next) => {
 
 };
 
+/*exports.likePost = (req, res, next) => {
+
+    connection.query ('SELECT * FROM posts JOIN likes ON posts.user_id = likes.post_id where likes.likes = true ' , [req.params.id],
+    function (err, results) {
+        if (results.length === 0) {
+            res.status(404).json({message :"pas de likes"})
+            ('insert into likes.post_id (likes) value likes=true')
+        }
+        res.status(200).json({message:"likes"})
 
 
+    })
+
+}
+
+
+*/
 
