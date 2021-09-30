@@ -20,29 +20,29 @@ exports.modifyUser = (req, res, next) => {
 
     connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, req.body.email, req.body.password,req.params.id],
     function (err,results) {
-        if (err){
-            res.status(500).json({message:"utilisateur nonb modifié" , error:err})
+        if (err || results.affectedRows==0){
+            res.status(500).json({message:"utilisateur non modifié" , error:err})
         }
-        res.status(200).json({ message:"utilisateurs modifié"});
+        res.status(200).json({ message:"utilisateurs modifié" , results});
        
     })
 }
 
 
-/* ***** Suppression d'un post ***** */
+/* ***** Suppression d'un utilisateur ***** */
 exports.deleteUser = (req, res, next) => {
 
     connection.query('delete from users where id = ?',[req.params.id],
     function (err, results) {
-        if (err) {
+        if (err || results.affectedRows==0) {
             res.status(500).json({message:"Utilisateur non supprimé" , error:err})
         }
-        res.status(204).json({message:"Utilisateur supprimer" , results})
+        res.status(200).json({message:"Utilisateur supprimer" , results})
     })
 }
 
 
-/* ***** Recherche de tout les posts ***** */ 
+/* ***** Recherche de tout les utilisateurs ***** */ 
 exports.getAllUsers = (req, res, next) => {
 
 connection.query('select * from users order by users.id = ?', [req.params.id],
@@ -60,7 +60,7 @@ console.log(results)
 
 }
 
-/* ***** Recherche d'un post ***** */
+/* ***** Recherche d'un utilisateur ***** */
 exports.getOneUser = (req, res, next) => {
 
 connection.query('select * from users where id = ?', [req.params.id],
