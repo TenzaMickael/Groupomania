@@ -19,7 +19,7 @@ exports.createPost = (req, res, next) => {
 /* ***** Modification d'un post ***** */ 
 exports.modifyPost = (req, res, next) => {
 
-            connection.query ('update posts set title = ?, publication = ?  where req.body.user_id = id', [req.body.title, req.body.publication, req.params.id],
+            connection.query ('update posts set title = ?, publication = ?  where id = ? and user_id = ?', [req.body.title, req.body.publication,req.params.id,req.body.user_id],
         function (err, results) {
          console.log(results)
             if (err) {
