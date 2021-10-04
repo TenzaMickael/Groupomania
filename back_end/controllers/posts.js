@@ -48,9 +48,9 @@ exports.getAllPosts = (req, res, next) => {
    
     function (err, results) {
 
-        if (results.length ===0) {
+        if (results.length === 0) {
 
-            res.status(404).json({message:"Utilisateurs sans posts" , error:err})
+            res.status(404).json({message:"Aucun posts" , error:err})
         }
         res.status(200).json({message:"les différents post ont été trouvé " , results})
     });
@@ -75,13 +75,13 @@ exports.getOnePost = (req, res, next) => {
 
 exports.likePost = (req, res, next) => {
 
-    connection.query ('select * from likes by user_id =? , post_id =? ' , [req.body.user_id,req.params.post_id],
+    connection.query ('select * from likes where user_id =? and post_id =? ' , [req.body.user_id,parseInt(req.params.post_id)],
     function (err, results) {
-  
+console.log(err)
         if (results.length === 0) {
-            
-            connection.query('insert into likes (post_id,user_id,likes,dislikes) values (?,?,?)',[req.params.post_id, req.body.user_id, true, false]),
-            res.status(200).json({message :"Commentaire validé "})
+           
+          //  connection.query('insert into likes (post_id,user_id,likes,dislikes) values (?,?,?)',[req.body.user_id, parseInt(req.params.post_id),  true, false]),
+          res.status(200).json({message :"Commentaire validé ",  error:err})
          
 
         }
