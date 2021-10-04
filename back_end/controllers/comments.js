@@ -2,11 +2,11 @@
 const connection = require('../middleware/connect.bdd');
 
 
-
 /* ***** Création d'un commentaire ***** */ 
 exports.createComment = (req, res, next) => {
 
     connection.query ('insert into comments (user_id,content,post_id) VALUES (?,?,?)', [req.body.user_id, req.body.content,req.body.post_id],
+
         function (err, results) {
             if (err) {
                 res.status(500).json({ message:"Commentaire non crée" , error:err })

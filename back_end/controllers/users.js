@@ -29,6 +29,7 @@ exports.modifyUser = (req, res, next) => {
 }
 
 
+
 /* ***** Suppression d'un utilisateur ***** */
 exports.deleteUser = (req, res, next) => {
 
@@ -54,7 +55,7 @@ if (results.length ===0) {
     res.status(404).json({message:"Aucun utilisateurs" , error:err})
 }
 res.status(200).json({message:"Utilisateurs trouvé " , results})
-console.log(results)
+
 });
 
 

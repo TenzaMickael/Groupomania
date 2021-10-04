@@ -1,5 +1,3 @@
-/* ********** Création du router qui contient les fonctions qui s'appliquent aux différentes routes pour les posts ********** */
-
 // Importation du Framework Express
 const express = require('express');
 
@@ -13,13 +11,3 @@ const commentCtrl = require('../controllers/comments');
 
 // Route qui permet de créer un post
 router.post('/', commentCtrl.createComment);
-//router.put('/:id', postCtrl.modifyPost);
-//router.delete('/:id', postCtrl.deletePost);
-//router.get('/',postCtrl.getAllPosts);
-//router.get('/:id', postCtrl.getOnePost);
-/*router.post('/:id/like',postCtrl.likePost);*/
-
-
-
-
-module.exports = router;

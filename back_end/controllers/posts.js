@@ -73,21 +73,24 @@ exports.getOnePost = (req, res, next) => {
 
 };
 
-/*exports.likePost = (req, res, next) => {
+exports.likePost = (req, res, next) => {
 
-    connection.query ('SELECT * FROM posts JOIN likes ON posts.user_id = likes.post_id where likes.likes = true ' , [req.params.id],
+    connection.query ('select * from likes by user_id =? , post_id =? ' , [req.body.user_id,req.params.post_id],
     function (err, results) {
+  
         if (results.length === 0) {
-            res.status(404).json({message :"pas de likes"})
-            ('insert into likes.post_id (likes) value likes=true')
-        }
-        res.status(200).json({message:"likes"})
+            
+            connection.query('insert into likes (post_id,user_id,likes,dislikes) values (?,?,?)',[req.params.post_id, req.body.user_id, true, false]),
+            res.status(200).json({message :"Commentaire validé "})
+         
 
+        }
+        res.status(200).json({message:"likepost"})
 
     })
 
 }
 
 
-*/
+
 
