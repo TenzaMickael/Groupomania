@@ -77,11 +77,11 @@ exports.likePost = (req, res, next) => {
 
     connection.query ('select * from likes where user_id =? and post_id =? ' , [req.body.user_id,parseInt(req.params.post_id)],
     function (err, results) {
-console.log(err)
+console.log(results)
         if (results.length === 0) {
            
           //  connection.query('insert into likes (post_id,user_id,likes,dislikes) values (?,?,?)',[req.body.user_id, parseInt(req.params.post_id),  true, false]),
-          res.status(200).json({message :"Commentaire validé ",  error:err})
+         res.status(200).json({message :"Commentaire validé "})
          
 
         }
