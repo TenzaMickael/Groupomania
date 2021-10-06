@@ -3,15 +3,17 @@ const connection = require('../middleware/connect.bdd');
 
 
 /* ***** Création d'un utilisateur ***** */ 
-exports.createUser = (req, res, next) => {   
+exports.createUser = (req, res, next) => { 
 
     connection.query('INSERT into users (pseudo,email,password,create_at) VALUES (?,?,?,now())', [req.body.pseudo, req.body.email,req.body.password],
         function (err, results) {
             if (err) {
                 res.status(500).json({message:"Utilisateur non crée" , results} )
             }
-            res.status(201).json({message:"Utilisateur crée" , results });
+                res.status(201).json({message:"Utilisateur crée" , results });
         })
+    
+   
 };
 
 
@@ -27,7 +29,6 @@ exports.modifyUser = (req, res, next) => {
        
     })
 }
-
 
 
 /* ***** Suppression d'un utilisateur ***** */
@@ -54,7 +55,7 @@ if (results.length ===0) {
 
     res.status(404).json({message:"Aucun utilisateurs" , error:err})
 }
-res.status(200).json({message:"Utilisateurs trouvé " , results})
+    res.status(200).json({message:"Utilisateurs trouvé " , results})
 
 });
 

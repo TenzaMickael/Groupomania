@@ -10,4 +10,10 @@ const commentCtrl = require('../controllers/comments');
 //* *****Création des différentes ROUTES de l'API en leurs précisant, dans l'ordre, leurs middlewares et controllers***** *//
 
 // Route qui permet de créer un post
-router.post('/', commentCtrl.createComment);
+router.post('/:user_id/:post_id', commentCtrl.createComment);
+router.put('/:user_id/:id', commentCtrl.modifyComment);
+router.delete('/:user_id/:id', commentCtrl.deleteComment);
+router.get('/' , commentCtrl.getAllComments);
+router.get('/:user_id/:id' , commentCtrl.getOneComment);
+
+module.exports = router;

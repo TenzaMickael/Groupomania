@@ -5,7 +5,7 @@ const connection = require('../middleware/connect.bdd');
 /* ***** Création d'un commentaire ***** */ 
 exports.createComment = (req, res, next) => {
 
-    connection.query ('insert into comments (user_id,content,post_id) VALUES (?,?,?)', [req.body.user_id, req.body.content,req.body.post_id],
+    connection.query ('insert into comments (user_id,content,post_id) VALUES (?,?,?)', [req.params.user_id, req.body.content,req.params.post_id],
 
         function (err, results) {
             if (err) {
@@ -15,92 +15,69 @@ exports.createComment = (req, res, next) => {
         });
 };
 
+/* ***** Modification d'un commentaire ***** */ 
+exports.modifyComment = (req, res, next) => {
 
-/* ***** Modification d'un post ***** */ 
+    connection.query ('update comments set content = ?  where user_id = ? and id= ? ', [req.body.content,req.params.user_id,req.params.id,],
 
-/*
-exports.modifyPost = (req, res, next) => {
 
-            connection.query ('update posts set title = ?, publication = ?  where id = ? and user_id = ?', [req.body.title, req.body.publication,req.params.id,req.body.user_id],
-        function (err, results) {
-         console.log(results)
-            if (err) {
-                res.status(500).json({message:"Post non modifié" , error:err})
-                console.log(req.params.id)
-            }
-            res.status(200).json({ message:"Post modifié"});
-            console.log(req.params.id)
-           
-        })
+function (err, results) {
+    if (err || results.affectedRows==0) {
+        res.status(500).json({message:"Commentaire non modifié" , error:err})
+    }
+    res.status(200).json({ message:"Commentaire modifié" , results});   
+})
 };
 
-*/
-/* ***** Suppression d'un post ***** */
-/*
-exports.deletePost = (req, res, next) => {
 
+/* ***** Suppression d'un commentaire  ***** */
 
-            connection.query('delete from posts where id = ?',[req.params.id],
+exports.deleteComment = (req, res, next) => {
+
+            connection.query('delete from comments where (user_id = ? and id = ?)',[req.params.user_id, req.params.id],
             function (err, results) {
-                if (err) {
-                    res.status(500).json({message:"Post non supprimé" , error:err})
+                if (err || results.affectedRows==0) {
+                    res.status(500).json({message:"Commentaire non supprimé" , error:err})
                 }
-                res.status(204).json({message:"Post supprimer" , results})
+                res.status(200).json({message:"Commentaire supprimer" , results})
             })
     }
 
 
-/* ***** Recherche de tout les posts ***** */ 
-/*
-exports.getAllPosts = (req, res, next) => {
+/* ***** Recherche de tout les commentaires ***** */ 
 
-    connection.query('select * from posts order by posts.user_id = ?', [req.params.id],
+exports.getAllComments = (req, res, next) => {
+
+    connection.query('select * from comments order by id = ?', [req.params.id],
    
     function (err, results) {
 
         if (results.length ===0) {
 
-            res.status(404).json({message:"Utilisateurs sans posts" , error:err})
+            res.status(404).json({message:"Aucun commentaire" , error:err})
         }
-        res.status(200).json({message:"les différents post ont été trouvé " , results})
+        res.status(200).json({message:"les différents commentaires ont été trouvé " , results})
         console.log(results)
     });
-
-
 }
 
-/* ***** Recherche d'un post ***** */
-/*
-exports.getOnePost = (req, res, next) => {
+   
 
-    connection.query('select * from posts where id = ?', [req.params.id],
+
+/* ***** Recherche d'un commentaire ***** */
+
+exports.getOneComment = (req, res, next) => {
+
+    connection.query('select * from comments where (user_id = ? and id = ?)', [req.params.user_id,req.params.id],
 
     function (err, results) {
         if (results.length === 0) {
             
-            res.status(404).json({message:"Post non trouvé"}) 
+            res.status(404).json({message:"Commentaire non trouvé"}) 
 
         } 
-        res.status(200).json({message:"Post trouvé"})
+        res.status(200).json({message:"Commentaire trouvé"})
     });
 
 };
-
-/*exports.likePost = (req, res, next) => {
-
-    connection.query ('SELECT * FROM posts JOIN likes ON posts.user_id = likes.post_id where likes.likes = true ' , [req.params.id],
-    function (err, results) {
-        if (results.length === 0) {
-            res.status(404).json({message :"pas de likes"})
-            ('insert into likes.post_id (likes) value likes=true')
-        }
-        res.status(200).json({message:"likes"})
-
-
-    })
-
-}
-
-
-*/
 
