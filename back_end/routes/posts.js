@@ -13,11 +13,13 @@ const postCtrl = require('../controllers/posts');
 
 // Route qui permet de créer un post
 router.post('/:user_id', postCtrl.createPost);
-router.put('/:id/:user_id', postCtrl.modifyPost);
+router.put('/:user_id/:id', postCtrl.modifyPost);
 router.delete('/:user_id/:id', postCtrl.deletePost);
 router.get('/',postCtrl.getAllPosts);
 router.get('/:user_id/:id', postCtrl.getOnePost);
 router.post('/like/:user_id/:post_id',postCtrl.likePost);
+router.post('/dislike/:user_id/:post_id',postCtrl.dislikePost);
+router.delete('/resetLikes/:user_id/:post_id',postCtrl.resetLikes);
 
 
 

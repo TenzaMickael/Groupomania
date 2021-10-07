@@ -1,19 +1,34 @@
 // On importe les identifiants de la bdd mysql 
 const connection = require('../middleware/connect.bdd');
 
+const bcrypt = require('bcrypt');
+
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config();
+
+
 
 /* ***** Création d'un utilisateur ***** */ 
 exports.createUser = (req, res, next) => { 
-
-    connection.query('INSERT into users (pseudo,email,password,create_at) VALUES (?,?,?,now())', [req.body.pseudo, req.body.email,req.body.password],
-        function (err, results) {
-            if (err) {
-                res.status(500).json({message:"Utilisateur non crée" , results} )
-            }
-                res.status(201).json({message:"Utilisateur crée" , results });
-        })
     
-   
+    const emailHash = Buffer.from(req.body.email).toString('hex');
+    bcrypt.hash(req.body.password, 10)
+    
+    .then(hash => {
+
+        connection.query('insert into  users (pseudo, email, password ,create_at) VALUES(?,?,?,now())', [req.body.pseudo, emailHash,hash],
+
+            function(err, results) {
+
+                if (err) {
+                    return res.status(500).json({message:"Utilisateur non crée" , results})
+                }else{
+                    return res.status(201).json({message:"Utilisateur crée" , results });
+                }
+            })
+    })
+    .catch(error => res.status(400).json({ error }));
 };
 
 
@@ -21,62 +36,80 @@ exports.createUser = (req, res, next) => {
 exports.modifyUser = (req, res, next) => {
 
     connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, req.body.email, req.body.password,req.params.id],
-    function (err,results) {
-        if (err || results.affectedRows==0){
-            res.status(500).json({message:"utilisateur non modifié" , error:err})
-        }
-        res.status(200).json({ message:"utilisateurs modifié" , results});
-       
-    })
-}
+
+        function (err,results) {
+
+            if (results.affectedRows == 0 ||! results.insertId == req.params.user_id){
+
+                return res.status(500).json({message:"utilisateur non modifié" , error:err})
+
+            }else{
+
+                return res.status(200).json({ message:"utilisateurs modifié" , results});
+
+            }
+        })
+};
 
 
 /* ***** Suppression d'un utilisateur ***** */
 exports.deleteUser = (req, res, next) => {
 
     connection.query('delete from users where id = ?',[req.params.id],
-    function (err, results) {
-        if (err || results.affectedRows==0) {
-            res.status(500).json({message:"Utilisateur non supprimé" , error:err})
-        }
-        res.status(200).json({message:"Utilisateur supprimer" , results})
-    })
+
+        function (err, results) {
+
+            if (results.affectedRows == 0 ||! results.insertId == req.params.user_id) {
+
+                return res.status(500).json({message:"Utilisateur non supprimé" , error:err})
+
+            }else {
+
+                return res.status(200).json({message:"Utilisateur supprimer" , results})
+            }
+        })
 }
 
 
 /* ***** Recherche de tout les utilisateurs ***** */ 
 exports.getAllUsers = (req, res, next) => {
 
-connection.query('select * from users order by users.id = ?', [req.params.id],
+    connection.query('select * from users' ,
 
-function (err, results) {
+        function (err, results) {
 
-if (results.length ===0) {
+            if (results.length ===0) {
 
-    res.status(404).json({message:"Aucun utilisateurs" , error:err})
+                return res.status(404).json({message:"Aucun utilisateurs" , error:err})
+
+            }else { 
+
+                return res.status(200).json({message:"Utilisateurs trouvé " , results})
+            }
+        });
 }
-    res.status(200).json({message:"Utilisateurs trouvé " , results})
 
-});
-
-
-}
 
 /* ***** Recherche d'un utilisateur ***** */
 exports.getOneUser = (req, res, next) => {
 
-connection.query('select * from users where id = ?', [req.params.id],
+    connection.query('select * from users where id = ?', [req.params.id],
 
-function (err, results) {
-if (results.length === 0) {
-    
-    res.status(404).json({message:"Utilisateur non trouvé"}) 
+        function(err, results) {
 
-} 
-res.status(200).json({message:"Utilisateur trouvé"})
-});
+            if (results.length === 0) {
 
-};
+                return res.status(404).json({message:"Utilisateur non trouvé" , error:err}) 
+                
+            }else{
+
+                return res.status(200).json({message:"utilisateur trouvé", results})
+                            
+            }
+        }
+
+)}
+ 
 
 /*exports.likePost = (req, res, next) => {
 
