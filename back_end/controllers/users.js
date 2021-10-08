@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
-
 /* ***** Création d'un utilisateur ***** */ 
 exports.createUser = (req, res, next) => { 
     
@@ -35,7 +34,13 @@ exports.createUser = (req, res, next) => {
 /* ***** Modification d'un utilisateur ***** */
 exports.modifyUser = (req, res, next) => {
 
-    connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, req.body.email, req.body.password,req.params.id],
+    const token = req.headers.authorization.split('')[1];
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+    const userId = decodedToken.userId
+
+    .then(userId => {
+
+    connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, req.body.email, req.body.password,userId],
 
         function (err,results) {
 
@@ -49,11 +54,16 @@ exports.modifyUser = (req, res, next) => {
 
             }
         })
+    })
+    .catch(error => res.status(400).json({ error }));
+    
 };
 
 
 /* ***** Suppression d'un utilisateur ***** */
 exports.deleteUser = (req, res, next) => {
+
+    
 
     connection.query('delete from users where id = ?',[req.params.id],
 
@@ -91,9 +101,9 @@ exports.getAllUsers = (req, res, next) => {
 
 
 /* ***** Recherche d'un utilisateur ***** */
-exports.getOneUser = (req, res, next) => {
+  exports.getOneUser = (req, res, next) => {
 
-    connection.query('select * from users where id = ?', [req.params.id],
+   connection.query('select * from users where id = ?', [req.params.id],
 
         function(err, results) {
 

@@ -25,20 +25,33 @@ exports.createPost = (req, res, next) => {
 /* ***** Modification d'un post ***** */ 
 exports.modifyPost = (req, res, next) => {
 
-    connection.query ('update posts set title = ?, publication = ?  where user_id =? and id = ? ', [req.body.title, req.body.publication,req.params.user_id,req.params.id],
+  /*   connection.query ('select * from posts where (user_id = ? and id = ?) ', [req.params.user_id],
+  
+    function (err, results) {
 
-        function (err, results) {
+        if (results.length===0 ||! results.insertId == req.params.user_id) {
 
-            if (results.affectedRow == 0 ||! results.insertId == req.params.user_id) {
+            return res.status(404).json({message:"utilisateur non identifié", error:err})
 
-                return res.status(500).json({message:"Post non modifié" , error:err})
+        }else{  
+      */  
+            connection.query ('update posts set title = ?, publication = ?  where user_id =? and id = ? ', [req.body.title, req.body.publication,req.params.user_id,req.params.id],
 
-            }else {
+            function (err, results) {
 
-                return res.status(200).json({ message:"Post modifié" , results});   
-            }
-        });
-};
+                if (results.affectedRows == 0) {
+
+                    return res.status(500).json({message:"Post non modifié" , error:err})
+
+                }else {
+
+                    return res.status(200).json({ message:"Post modifié" , results}); 
+
+                }
+            });
+         }
+   /*  }
+/* )};
 
 
 /* ***** Suppression d'un post ***** */
@@ -113,8 +126,8 @@ exports.likePost = (req, res, next) => {
                 connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[req.params.user_id, req.params.post_id,  true, false],
 
                     function (err, results) {
-
-                        return res.status(200).json({message :"Avis validé "});
+                        console.log(results)
+                        return res.status(200).json({message :"Avis validé " , results});
                     
                     })
                 
@@ -123,10 +136,11 @@ exports.likePost = (req, res, next) => {
                 connection.query('update likes set user_id = ? , post_id = ? , likes = ? , dislike = ? where user_id = ? and post_id = ? ', [req.params.user_id , req.params.post_id , true, false ,req.params.user_id,req.params.post_id ],
                             
                     function (err,results){
-                    
-                        return res.status(200).json({message:"Like mis à jour ", results});
+                        console.log(results)
+                        return res.status(200).json({message:"Mauvais id du post", results});
                         
-                     })                 
+                        
+                    })                 
             }
         }
 )}
@@ -145,7 +159,7 @@ exports.dislikePost = (req, res, next) => {
 
                     function (err, results) {
 
-                        return res.status(200).json({message :"Avis validé "});
+                        return res.status(200).json({message :"Avis validé ", results});
                     
                     })
                 
@@ -161,6 +175,7 @@ exports.dislikePost = (req, res, next) => {
             }
         }
 )};
+
 
 /* ***** Reset du like dislikes ***** */
 exports.resetLikes = (req, res, next) => {

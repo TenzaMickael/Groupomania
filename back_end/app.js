@@ -12,12 +12,6 @@ const helmet = require('helmet');
 // Importation du package body-parser qui permet d'extraire l'objet JSON des requêtes POST
 const bodyParser = require('body-parser');
 
-// Importation du package qui sert dans l'upload des images et permet de travailler avec les répertoires et chemin de fichier
-const path = require('path');
-
-//Récupération du package mysql2 pour se connecter a notre BDD mysql
-//const mysql = require('mysql2');
-
 // On demande d'appliquer le package dotenv pour sécurisé des données sensible
 require('dotenv').config();
 
@@ -50,8 +44,6 @@ app.use((req, res, next) => {
 // Middleware qui permet de transformer le corp de la requête en un objet JSON utilisable
 app.use(bodyParser.json());
 
-// Midleware qui permet de charger les fichiers qui sont dans le repertoire images
-app.use('/images', express.static(path.join(__dirname, 'images' )));
 
 // Routes dédiées aux posts
 app.use('/api/posts', postRoutes);

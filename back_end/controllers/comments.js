@@ -102,3 +102,86 @@ exports.getOneComment = (req, res, next) => {
         });
 };
 
+
+/* ***** Like d'un post ***** */
+exports.likeComment = (req, res, next) => {
+
+    connection.query ('select * from likes where (user_id = ? and comment_id =? )' , [req.params.user_id,req.params.comment_id],
+    
+        function (err, results) {
+
+            if (results.length === 0) {
+           
+                connection.query('insert into likes (user_id,comment_id,likes,dislikes) values (?,?,?,?)',[req.params.user_id, req.params.comment_id,  true, false],
+
+                    function (err, results) {
+                        console.log(results)
+                        return res.status(200).json({message :"Avis validé " , results});
+                    
+                    })
+                
+            }else{   
+
+                connection.query('update likes set user_id = ? , comment_id = ? , likes = ? , dislike = ? where user_id = ? and comment_id = ? ', [req.params.user_id , req.params.post_id , true, false ,req.params.user_id,req.params.post_id ],
+                            
+                    function (err,results){
+                        console.log(results)
+                        return res.status(200).json({message:"Mauvais id du commentaire", results});
+                        
+                        
+                    })                 
+            }
+        }
+)}
+
+
+/* ***** Dislike d'un post ***** */
+exports.dislikeComment = (req, res, next) => {
+
+    connection.query ('select * from likes where (user_id = ? and comment_id =? )' , [req.params.user_id,req.params.comment_id],
+    
+        function (err, results) {
+
+            if (results.length === 0) {
+           
+                connection.query('insert into likes (user_id,comment_id,likes,dislikes) values (?,?,?,?)',[req.params.user_id, req.params.comment_id, false, true],
+
+                    function (err, results) {
+
+                        return res.status(200).json({message :"Avis validé "});
+                    
+                    })
+                
+            }else{   
+
+                connection.query('update likes set user_id = ? , comment_id = ? , likes = ? , dislike = ? where user_id = ? and comment_id = ? ', [req.params.user_id , req.params.comment_id , false, true ,req.params.user_id,req.params.comment_id ],
+                            
+                    function (err,results){
+                    
+                        return res.status(200).json({message:"Like mis à jour", results});
+                        
+                     })                 
+            }
+        }
+)};
+
+
+/* ***** Reset du like dislikes ***** */
+exports.resetLikes = (req, res, next) => {
+
+    connection.query ('delete from likes where (user_id = ? and comment_id = ?)' , [req.params.user_id,req.params.comment_id],
+
+        function (err, results) {
+      
+            if (results.affectedRows == 0) {
+          
+                return res.status(500).json({message:"Avis non supprimé " , error:err})
+
+            }else{
+          
+                return res.status(200).json({message:"Avis réinitialisé" , results})
+
+            }
+    }
+)};
+
