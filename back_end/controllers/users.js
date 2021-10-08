@@ -8,8 +8,33 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
+/* Connection  */
+exports.signup = (req,res,next) => {
+
+    const emailHash = Buffer.from(req.body.email).toString('hex');
+    bcrypt.hash(req.body.password, 10)
+
+    .then(hash => {
+
+        connection.query('insert into  users (pseudo, email, password ,create_at) values (?,?,?,now())', [req.body.pseudo, emailHash, hash],
+        function(err, results) {
+
+            if (err) {
+                return res.status(500).json({message:"Utilisateur non crée" , results})
+            }else{
+                return res.status(201).json({message:"Utilisateur crée" , results });
+            }
+        })
+    })
+    .catch(error => res.status(400).json({ error }));
+};
+
+
+
+
+
 /* ***** Création d'un utilisateur ***** */ 
-exports.createUser = (req, res, next) => { 
+/*exports.createUser = (req, res, next) => { 
     
     const emailHash = Buffer.from(req.body.email).toString('hex');
     bcrypt.hash(req.body.password, 10)
