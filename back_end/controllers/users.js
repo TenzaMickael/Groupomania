@@ -36,9 +36,7 @@ exports.modifyUser = (req, res, next) => {
 
     const token = req.headers.authorization.split('')[1];
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
-    const userId = decodedToken.userId
-
-    .then(userId => {
+    const userId = decodedToken.userId;
 
     connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, req.body.email, req.body.password,userId],
 
@@ -54,16 +52,13 @@ exports.modifyUser = (req, res, next) => {
 
             }
         })
-    })
-    .catch(error => res.status(400).json({ error }));
+    
     
 };
 
 
 /* ***** Suppression d'un utilisateur ***** */
 exports.deleteUser = (req, res, next) => {
-
-    
 
     connection.query('delete from users where id = ?',[req.params.id],
 
@@ -121,22 +116,3 @@ exports.getAllUsers = (req, res, next) => {
 )}
  
 
-/*exports.likePost = (req, res, next) => {
-
-connection.query ('SELECT * FROM posts JOIN likes ON posts.user_id = likes.post_id where likes.likes = true ' , [req.params.id],
-function (err, results) {
-if (results.length === 0) {
-    res.status(404).json({message :"pas de likes"})
-    ('insert into likes.post_id (likes) value likes=true')
-}
-res.status(200).json({message:"likes"})
-
-
-})
-
-}
-
-
-*/
-
- 
