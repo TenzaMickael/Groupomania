@@ -7,9 +7,11 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
         const userId = decodedToken.userId; 
+        const userAdmin = decodedToken.userAdmin;
        
-        if(req.body.userId && req.body.userId != userId ){
-            throw 'User ID non valable'; 
+          
+        if(req.body.userId && req.body.userId != userId && userAdmin!=1){
+            throw 'User ID non valable ou non administrateur'; 
         }
         else {
             if(req.method == "GET") {

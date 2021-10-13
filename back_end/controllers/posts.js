@@ -22,6 +22,46 @@ exports.createPost = (req, res, next) => {
 };
 
 
+/* ***** Recherche de tout les posts ***** */ 
+exports.getAllPosts = (req, res, next) => {
+
+    connection.query('select * from posts',
+ 
+        function (err, results) {   
+
+            if (results.length === 0) {
+
+                return res.status(404).json({message:"Aucun posts" , error:err})
+
+            }else {
+
+                return res.status(200).json({message:"les différents post ont été trouvé " , results})
+
+            }
+        });
+};
+
+
+/* ***** Recherche d'un post ***** */
+exports.getOnePost = (req, res, next) => {
+
+    connection.query('select * from posts where (user_id =? and id = ? )', [req.params.user_id,req.params.id],
+
+        function (err, results) {
+
+            if (results.length === 0) {
+            
+                return res.status(404).json({message:"Post non trouvé" , error:err}) 
+
+            }else{
+
+                return res.status(200).json({message:"Post trouvé" , results})
+
+            }
+        });
+};
+
+
 /* ***** Modification d'un post ***** */ 
 exports.modifyPost = (req, res, next) => {
 
@@ -74,44 +114,6 @@ exports.deletePost = (req, res, next) => {
 };
 
 
-/* ***** Recherche de tout les posts ***** */ 
-exports.getAllPosts = (req, res, next) => {
-
-    connection.query('select * from posts',
- 
-        function (err, results) {   
-
-            if (results.length === 0) {
-
-                return res.status(404).json({message:"Aucun posts" , error:err})
-
-            }else {
-
-                return res.status(200).json({message:"les différents post ont été trouvé " , results})
-
-            }
-        });
-};
-
-
-/* ***** Recherche d'un post ***** */
-exports.getOnePost = (req, res, next) => {
-
-    connection.query('select * from posts where (user_id =? and id = ? )', [req.params.user_id,req.params.id],
-
-        function (err, results) {
-
-            if (results.length === 0) {
-            
-                return res.status(404).json({message:"Post non trouvé" , error:err}) 
-
-            }else{
-
-                return res.status(200).json({message:"Post trouvé" , results})
-
-            }
-        });
-};
 
 
 /* ***** Like d'un post ***** */

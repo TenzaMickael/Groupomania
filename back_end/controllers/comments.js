@@ -21,46 +21,6 @@ exports.createComment = (req, res, next) => {
 };
 
 
-/* ***** Modification d'un commentaire ***** */ 
-exports.modifyComment = (req, res, next) => {
-
-    connection.query ('update comments set content = ?  where user_id = ? and id = ? ', [req.body.content,req.params.user_id,req.params.id,],
-
-        function (err, results) {
-
-            if (results.affectedRows == 0 ) {
-console.log(results)
-                return res.status(500).json({message:"Commentaire non modifié" , error:err})
-
-            }else{
-                console.log(results)
-                return res.status(200).json({ message:"Commentaire modifié" , results}); 
-            }  
-        })
-};
-
-
-/* ***** Suppression d'un commentaire  ***** */
-
-exports.deleteComment = (req, res, next) => {
-
-    connection.query('delete from comments where (user_id = ? and id = ?)',[req.params.user_id, req.params.id],
-
-        function (err, results) {
-
-            if (results.affectedRows==0 ||! results.insertId == req.params.user_id ) {
-
-                return res.status(500).json({message:"Commentaire non supprimé" , error:err})
- 
-            }else{
-
-                return res.status(200).json({message:"Commentaire supprimer" , results})
-
-            }
-        })
-}
-
-
 /* ***** Recherche de tout les commentaires ***** */ 
 
 exports.getAllComments = (req, res, next) => {
@@ -101,6 +61,48 @@ exports.getOneComment = (req, res, next) => {
             }
         });
 };
+
+
+/* ***** Modification d'un commentaire ***** */ 
+exports.modifyComment = (req, res, next) => {
+
+    connection.query ('update comments set content = ?  where user_id = ? and id = ? ', [req.body.content,req.params.user_id,req.params.id,],
+
+        function (err, results) {
+
+            if (results.affectedRows == 0 ) {
+console.log(results)
+                return res.status(500).json({message:"Commentaire non modifié" , error:err})
+
+            }else{
+                console.log(results)
+                return res.status(200).json({ message:"Commentaire modifié" , results}); 
+            }  
+        })
+};
+
+
+/* ***** Suppression d'un commentaire  ***** */
+
+exports.deleteComment = (req, res, next) => {
+
+    connection.query('delete from comments where (user_id = ? and id = ?)',[req.params.user_id, req.params.id],
+
+        function (err, results) {
+
+            if (results.affectedRows==0 ||! results.insertId == req.params.user_id ) {
+
+                return res.status(500).json({message:"Commentaire non supprimé" , error:err})
+ 
+            }else{
+
+                return res.status(200).json({message:"Commentaire supprimer" , results})
+
+            }
+        })
+}
+
+
 
 
 /* ***** Like d'un post ***** */

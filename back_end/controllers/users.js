@@ -5,10 +5,11 @@ const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
 
+
 require('dotenv').config();
 
 
-/* Connection  */
+/* Création d'un utilisateur   */
 exports.signup = (req,res,next) => {
 
     const emailHash = Buffer.from(req.body.email).toString('hex');
@@ -30,36 +31,76 @@ exports.signup = (req,res,next) => {
 };
 
 
-
-
-
-/* ***** Création d'un utilisateur ***** */ 
-/*exports.createUser = (req, res, next) => { 
-    
+/* ***** Connection d'un utilisateur ***** */
+exports.login = (req, res, next) => {
     const emailHash = Buffer.from(req.body.email).toString('hex');
     bcrypt.hash(req.body.password, 10)
-    
-    .then(hash => {
 
-        connection.query('insert into  users (pseudo, email, password ,create_at) VALUES(?,?,?,now())', [req.body.pseudo, emailHash,hash],
+    connection.query('select * from users where email = ?', [emailHash],
 
-            function(err, results) {
+        function(err, results) {
+          
+            if (results.length === 0) {
+                
+                 return res.status(404).json({message: "L'utilisateur n'existe pas" , error:err}) 
+                
+            }
+            console.log('password', req.body.password);
+            console.log('passwordUser', results[0].password);
 
-                if (err) {
-                    return res.status(500).json({message:"Utilisateur non crée" , results})
-                }else{
-                    return res.status(201).json({message:"Utilisateur crée" , results });
-                }
-            })
-    })
-    .catch(error => res.status(400).json({ error }));
-};
+                bcrypt.compare(req.body.password, results[0].password)
+               
+                .then(valid => {
+                    console.log('valid', valid)
+                    
+                    if(!valid) {
+                        return res.status(500).json({    message: "L'utilisateur et le mot de passe ne correspondent pas"})
+                    }
+
+                    console.log('id', results[0].id);
+
+                    res.status(200).json({ 
+                        message: 'Login effectué, vous allez être redirigé ',
+                         token: jwt.sign(
+                            { userId: results[0].id, userAdmin: results[0].admin },
+                            process.env.SECRET_TOKEN,
+                            { expiresIn: '24h'}
+                        ), 
+                        userId: results[0].id
+                    });  
+                
+                })
+                .catch(() => {
+                    return res.status(500).json({message:"Une erreur s'est produite"});       
+                })
+            
+        })
+}
+         
+
+/* ***** Voir les autres utilisateurs ***** */ 
+exports.getAllUsers = (req, res, next) => {
+
+    connection.query('select * from users' ,
+
+        function (err, results) {
+
+            if (results.length ===0) {
+
+                return res.status(404).json({message:"Aucun utilisateurs" , error:err})
+
+            }else { 
+
+                return res.status(200).json({message:"Utilisateurs trouvé " , results})
+            }
+        });
+}
 
 
 /* ***** Modification d'un utilisateur ***** */
 exports.modifyUser = (req, res, next) => {
 
-    const token = req.headers.authorization.split('')[1];
+   const token = req.headers.authorization.split('')[1];
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
     const userId = decodedToken.userId;
 
@@ -67,7 +108,7 @@ exports.modifyUser = (req, res, next) => {
 
         function (err,results) {
 
-            if (results.affectedRows == 0 ||! results.insertId == req.params.user_id){
+            if (results.affectedRows == 0 ){
 
                 return res.status(500).json({message:"utilisateur non modifié" , error:err})
 
@@ -101,43 +142,9 @@ exports.deleteUser = (req, res, next) => {
 }
 
 
-/* ***** Recherche de tout les utilisateurs ***** */ 
-exports.getAllUsers = (req, res, next) => {
-
-    connection.query('select * from users' ,
-
-        function (err, results) {
-
-            if (results.length ===0) {
-
-                return res.status(404).json({message:"Aucun utilisateurs" , error:err})
-
-            }else { 
-
-                return res.status(200).json({message:"Utilisateurs trouvé " , results})
-            }
-        });
-}
 
 
-/* ***** Recherche d'un utilisateur ***** */
-  exports.getOneUser = (req, res, next) => {
 
-   connection.query('select * from users where id = ?', [req.params.id],
 
-        function(err, results) {
-
-            if (results.length === 0) {
-
-                return res.status(404).json({message:"Utilisateur non trouvé" , error:err}) 
-                
-            }else{
-
-                return res.status(200).json({message:"utilisateur trouvé", results})
-                            
-            }
-        }
-
-)}
  
 
