@@ -8,13 +8,14 @@ module.exports = (req, res, next) => {
         const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
         const userId = decodedToken.userId; 
        
-        if(req.body.userId && req.body.userId != userId ){
+        if((typeof req.body.userId == 'undefined') || req.body.userId != userId){
             throw 'User ID non valable'; 
         }
         else {
-            if(req.method == "GET") {
+            
                 req.body.userId = userId
-            }
+                
+            
             next(); 
         }
     }

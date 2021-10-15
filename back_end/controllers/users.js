@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
 
-
 require('dotenv').config();
 
 
@@ -33,6 +32,10 @@ exports.signup = (req,res,next) => {
 
 /* ***** Connection d'un utilisateur ***** */
 exports.login = (req, res, next) => {
+
+    const userId = req.body.userId
+
+    
     const emailHash = Buffer.from(req.body.email).toString('hex');
     bcrypt.hash(req.body.password, 10)
 
@@ -45,21 +48,25 @@ exports.login = (req, res, next) => {
                  return res.status(404).json({message: "L'utilisateur n'existe pas" , error:err}) 
                 
             }
+
             console.log('password', req.body.password);
             console.log('passwordUser', results[0].password);
 
                 bcrypt.compare(req.body.password, results[0].password)
                
                 .then(valid => {
+
                     console.log('valid', valid)
                     
                     if(!valid) {
+
                         return res.status(500).json({    message: "L'utilisateur et le mot de passe ne correspondent pas"})
                     }
 
                     console.log('id', results[0].id);
 
                     res.status(200).json({ 
+
                         message: 'Login effectué, vous allez être redirigé ',
                          token: jwt.sign(
                             { userId: results[0].id, userAdmin: results[0].admin },
@@ -73,13 +80,9 @@ exports.login = (req, res, next) => {
                 .catch(() => {
                     return res.status(500).json({message:"Une erreur s'est produite"});       
                 })
-            
         })
 }
          
- 
- 
-
 
 
 /* ***** Recherche de tout les utilisateurs ***** */ 
@@ -101,37 +104,31 @@ exports.getAllUsers = (req, res, next) => {
 }
 
 
-
-
-
 /* ***** Modification d'un utilisateur ***** */
 exports.modifyUser = (req, res, next) => {
 
-   // const token = req.headers.authorization.split('')[1];
-  //  const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
-   // const userId = decodedToken.userId;
-  console.log( req.body.userId)
+    const userId = req.body.userId
 
-    connection.query ('select id from users where id = ? ', [userId],
+    connection.query ('select id from users where id = ? ', [req.body.userId],
 
     function (err,results){
-        console.log(results)
-
-        if (req.body.userId != userId){
+        
+        if (userId !== results[0].id){
 
             return res.status(404).json({ message:"utilisateur non trouvé", error:err});
 
         }else{
+
             const emailHash = Buffer.from(req.body.email).toString('hex');
             bcrypt.hash(req.body.password, 10)
 
             .then(hash => {
 
-                connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, emailHash, hash,userId],
+                connection.query ('update users set pseudo= ?,email= ?,password= ? where id= ?', [req.body.pseudo, emailHash, hash,userId],
 
                 function (err,results) {
-
-                    if (results.affectedRows == 0 ){
+                   
+                    if (err ){
 
                         return res.status(500).json({message:"utilisateur non modifié" , error:err})
 
@@ -152,23 +149,37 @@ exports.modifyUser = (req, res, next) => {
 /* ***** Suppression d'un utilisateur ***** */
 exports.deleteUser = (req, res, next) => {
 
-    connection.query('delete from users where id = ?',[req.params.id],
+    const userId = req.body.userId
 
-        function (err, results) {
+    connection.query ('select id from users where id = ? ', [userId],
 
-            if (results.affectedRows == 0 ||! results.insertId == req.params.user_id) {
 
-                return res.status(500).json({message:"Utilisateur non supprimé" , error:err})
+    function (err,results){
+      
+        if (userId === undefined) {
 
-            }else {
 
-                return res.status(200).json({message:"Utilisateur supprimer" , results})
-            }
-        })
+            return res.status(404).json({ message:"utilisateur non trouvé", error:err});
+
+        }else{
+
+            connection.query('delete from users where id = ?',[userId],
+
+            function (err, results) {
+
+                if (err) {
+
+                    return res.status(500).json({message:"Utilisateur non supprimé" , error:err})
+
+                }else {
+
+                    return res.status(200).json({message:"Utilisateur supprimer" , results})
+                }
+            })
+    
+        }
+    })
 }
-
-
-
 
 
 
