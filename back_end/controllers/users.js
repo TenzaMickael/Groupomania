@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
-/* Création d'un utilisateur   */
+/* Connection  */
 exports.signup = (req,res,next) => {
 
     const emailHash = Buffer.from(req.body.email).toString('hex');
@@ -77,8 +77,12 @@ exports.login = (req, res, next) => {
         })
 }
          
+ 
+ 
 
-/* ***** Voir les autres utilisateurs ***** */ 
+
+
+/* ***** Recherche de tout les utilisateurs ***** */ 
 exports.getAllUsers = (req, res, next) => {
 
     connection.query('select * from users' ,
@@ -97,29 +101,51 @@ exports.getAllUsers = (req, res, next) => {
 }
 
 
+
+
+
 /* ***** Modification d'un utilisateur ***** */
 exports.modifyUser = (req, res, next) => {
 
-   const token = req.headers.authorization.split('')[1];
-    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
-    const userId = decodedToken.userId;
+   // const token = req.headers.authorization.split('')[1];
+  //  const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+   // const userId = decodedToken.userId;
+  console.log( req.body.userId)
 
-    connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, req.body.email, req.body.password,userId],
+    connection.query ('select id from users where id = ? ', [userId],
 
-        function (err,results) {
+    function (err,results){
+        console.log(results)
 
-            if (results.affectedRows == 0 ){
+        if (req.body.userId != userId){
 
-                return res.status(500).json({message:"utilisateur non modifié" , error:err})
+            return res.status(404).json({ message:"utilisateur non trouvé", error:err});
 
-            }else{
+        }else{
+            const emailHash = Buffer.from(req.body.email).toString('hex');
+            bcrypt.hash(req.body.password, 10)
 
-                return res.status(200).json({ message:"utilisateurs modifié" , results});
+            .then(hash => {
 
-            }
-        })
-    
-    
+                connection.query ('update users set pseudo=?,email=?,password=? where id=?', [req.body.pseudo, emailHash, hash,userId],
+
+                function (err,results) {
+
+                    if (results.affectedRows == 0 ){
+
+                        return res.status(500).json({message:"utilisateur non modifié" , error:err})
+
+                    }else{
+
+                        return res.status(200).json({ message:"utilisateurs modifié" , results});
+
+                    }
+                })
+            })
+            .catch(error => res.status(400).json({ error }));
+
+        }
+    })
 };
 
 
