@@ -20,8 +20,12 @@ module.exports = (req, res, next) => {
         }
     }
     catch (error) {
+
+        
         console.log(error);
         console.log('Requete non authentifiée');
+
+        return res.status(401).json({ message:" utilisateur non autorisés / introuvable  !", error});
     }
 };
 

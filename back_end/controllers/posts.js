@@ -2,11 +2,13 @@
 const connection = require('../middleware/connect.bdd');
 
 
+
 /* ***** Création d'un post ***** */ 
 
 exports.createPost = (req, res, next) => {
+    const userId = req.body.userId
 
-    connection.query ('insert into posts (title,publication,created,user_id) VALUES (?,?,now(),?)', [req.body.title, req.body.publication,req.params.user_id],
+    connection.query ('insert into posts (title,publication,created,user_id) VALUES (?,?,now(),?)', [req.body.title, req.body.publication,userId],
 
         function (err, results) {
 
@@ -45,7 +47,7 @@ exports.getAllPosts = (req, res, next) => {
 /* ***** Recherche d'un post ***** */
 exports.getOnePost = (req, res, next) => {
 
-    connection.query('select * from posts where (user_id =? and id = ? )', [req.params.user_id,req.params.id],
+    connection.query('select * from posts where id = ? ', [req.params.id],
 
         function (err, results) {
 
@@ -65,52 +67,72 @@ exports.getOnePost = (req, res, next) => {
 /* ***** Modification d'un post ***** */ 
 exports.modifyPost = (req, res, next) => {
 
-  /*   connection.query ('select * from posts where (user_id = ? and id = ?) ', [req.params.user_id],
-  
-    function (err, results) {
+    const postId = req.body.postId
+    const userId = req.body.userId
 
-        if (results.length===0 ||! results.insertId == req.params.user_id) {
+    connection.query ('select id from posts where id = ? ', [postId,userId],
 
-            return res.status(404).json({message:"utilisateur non identifié", error:err})
+    function (err,results){
+        
+        if (results.length === 0){
 
-        }else{  
-      */  
-            connection.query ('update posts set title = ?, publication = ?  where user_id =? and id = ? ', [req.body.title, req.body.publication,req.params.user_id,req.params.id],
+            return res.status(404).json({ message:"post non trouvé", error:err});
 
-            function (err, results) {
+        }else{
+        
 
-                if (results.affectedRows == 0) {
+            connection.query ('update posts set title = ?, publication = ? where id= ? and user_id = ?', [req.body.title, req.body.publication,postId,userId],
 
-                    return res.status(500).json({message:"Post non modifié" , error:err})
+                function (err,results) {
+                   
+                    if (err){
 
-                }else {
+                        return res.status(500).json({message:"post non modifié" , error:err})
 
-                    return res.status(200).json({ message:"Post modifié" , results}); 
+                    }else{
 
-                }
-            });
-         }
-   /*  }
-/* )};
+                        return res.status(200).json({ message:"post modifié" , results});
+
+                    }
+                })          
+        }
+    })
+}
 
 
 /* ***** Suppression d'un post ***** */
 exports.deletePost = (req, res, next) => {
+    const postId = req.body.postId;
+    const userId = req.body.userId;
 
-    connection.query('delete from posts where (user_id = ? and id = ?) ',[req.params.user_id, req.params.id],
+    connection.query ('select id from posts where id = ? and user_id = ? ', [postId, userId ],
 
-        function (err, results) {
 
-            if (results.affectedRows ==0  ) {
+    function (err,results){
+      
+        if (results.length === 0) {
 
-                return res.status(500).json({message:"Post non supprimé" , error:err})
 
-            }else{
+            return res.status(404).json({ message:"Post non trouvé", error:err});
 
-                return res.status(200).json({message:"Post supprimer" , results})
+        }else{
 
-            }
-        });
+            connection.query('delete from posts where id = ? and user_id = ?',[postId,userId],
+
+            function (err, results) {
+
+                if (err) {
+
+                    return res.status(500).json({message:"Post non supprimé" , error:err})
+
+                }else {
+
+                    return res.status(200).json({message:"Post supprimer" , results})
+                }
+            })
+    
+        }
+    })
 };
 
 
@@ -119,13 +141,16 @@ exports.deletePost = (req, res, next) => {
 /* ***** Like d'un post ***** */
 exports.likePost = (req, res, next) => {
 
-    connection.query ('select * from likes where (user_id = ? and post_id =? )' , [req.params.user_id,req.params.post_id],
+    const postId = req.body.postId;
+    const userId = req.body.userId;
+
+    connection.query ('select * from likes where (user_id = ? and post_id =? )' , [userId,postId],
     
         function (err, results) {
 
             if (results.length === 0) {
            
-                connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[req.params.user_id, req.params.post_id,  true, false],
+                connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[userId, postId,  true, false],
 
                     function (err, results) {
                         console.log(results)
@@ -135,7 +160,7 @@ exports.likePost = (req, res, next) => {
                 
             }else{   
 
-                connection.query('update likes set user_id = ? , post_id = ? , likes = ? , dislike = ? where user_id = ? and post_id = ? ', [req.params.user_id , req.params.post_id , true, false ,req.params.user_id,req.params.post_id ],
+                connection.query('update likes set user_id = ? , post_id = ? , likes = ? , dislike = ? where user_id = ? and post_id = ? ', [userId , postId , true, false ,userId,postId ],
                             
                     function (err,results){
                         console.log(results)

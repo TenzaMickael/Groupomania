@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
-/* Connection  */
+/* Création d'un users  */
 exports.signup = (req,res,next) => {
 
     const emailHash = Buffer.from(req.body.email).toString('hex');
@@ -33,9 +33,6 @@ exports.signup = (req,res,next) => {
 /* ***** Connection d'un utilisateur ***** */
 exports.login = (req, res, next) => {
 
-    const userId = req.body.userId
-
-    
     const emailHash = Buffer.from(req.body.email).toString('hex');
     bcrypt.hash(req.body.password, 10)
 
@@ -113,7 +110,7 @@ exports.modifyUser = (req, res, next) => {
 
     function (err,results){
         
-        if (userId !== results[0].id){
+        if (userId != results[0].id){
 
             return res.status(404).json({ message:"utilisateur non trouvé", error:err});
 
@@ -156,7 +153,7 @@ exports.deleteUser = (req, res, next) => {
 
     function (err,results){
       
-        if (userId === undefined) {
+        if (userId != results[0].id) {
 
 
             return res.status(404).json({ message:"utilisateur non trouvé", error:err});
