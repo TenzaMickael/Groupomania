@@ -67,37 +67,29 @@ exports.getOnePost = (req, res, next) => {
 /* ***** Modification d'un post ***** */ 
 exports.modifyPost = (req, res, next) => {
 
-    const postId = req.body.postId
-    const userId = req.body.userId
+  const postId= req.body.postId;
+  const userId = req.body.userId;
+     
 
-    connection.query ('select id from posts where id = ? ', [postId,userId],
+connection.query ('update posts set title = ?, publication = ? where id= ? and user_id = ?', [req.body.title, req.body.publication,postId,userId],
 
-    function (err,results){
-        
-        if (results.length === 0){
+    function (err,results) {
+                   
+        if (results.affectedRows == 0){
 
-            return res.status(404).json({ message:"post non trouvé", error:err});
+            return res.status(500).json({message:"post non modifié" , error:err})
 
         }else{
-        
 
-            connection.query ('update posts set title = ?, publication = ? where id= ? and user_id = ?', [req.body.title, req.body.publication,postId,userId],
+            return res.status(200).json({ message:"post modifié" , results});
 
-                function (err,results) {
-                   
-                    if (err){
-
-                        return res.status(500).json({message:"post non modifié" , error:err})
-
-                    }else{
-
-                        return res.status(200).json({ message:"post modifié" , results});
-
-                    }
-                })          
         }
-    })
+    })          
 }
+    
+
+
+
 
 
 /* ***** Suppression d'un post ***** */
@@ -105,23 +97,15 @@ exports.deletePost = (req, res, next) => {
     const postId = req.body.postId;
     const userId = req.body.userId;
 
-    connection.query ('select id from posts where id = ? and user_id = ? ', [postId, userId ],
+   
 
 
-    function (err,results){
-      
-        if (results.length === 0) {
-
-
-            return res.status(404).json({ message:"Post non trouvé", error:err});
-
-        }else{
 
             connection.query('delete from posts where id = ? and user_id = ?',[postId,userId],
 
             function (err, results) {
 
-                if (err) {
+                if (results.affectedRows == 0) {
 
                     return res.status(500).json({message:"Post non supprimé" , error:err})
 
@@ -131,9 +115,9 @@ exports.deletePost = (req, res, next) => {
                 }
             })
     
-        }
-    })
-};
+}
+
+
 
 
 
@@ -141,20 +125,23 @@ exports.deletePost = (req, res, next) => {
 /* ***** Like d'un post ***** */
 exports.likePost = (req, res, next) => {
 
-    const postId = req.body.postId;
-    const userId = req.body.userId;
+    const postId = req.body.postId
+    const userId = req.body.userId
+
 
     connection.query ('select * from likes where (user_id = ? and post_id =? )' , [userId,postId],
     
         function (err, results) {
 
             if (results.length === 0) {
-           
+
+       
                 connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[userId, postId,  true, false],
 
                     function (err, results) {
-                        console.log(results)
-                        return res.status(200).json({message :"Avis validé " , results});
+                       
+                    
+                        return res.status(200).json({message :" Post liké " , results});
                     
                     })
                 
@@ -163,8 +150,8 @@ exports.likePost = (req, res, next) => {
                 connection.query('update likes set user_id = ? , post_id = ? , likes = ? , dislike = ? where user_id = ? and post_id = ? ', [userId , postId , true, false ,userId,postId ],
                             
                     function (err,results){
-                        console.log(results)
-                        return res.status(200).json({message:"Mauvais id du post", results});
+                       
+                        return res.status(200).json({message:"Post déja liker", results});
                         
                         
                     })                 
@@ -176,13 +163,19 @@ exports.likePost = (req, res, next) => {
 /* ***** Dislike d'un post ***** */
 exports.dislikePost = (req, res, next) => {
 
-    connection.query ('select * from likes where (user_id = ? and post_id =? )' , [req.params.user_id,req.params.post_id],
+    const postId = req.body.postId
+    const userId = req.body.userId
+
+
+    connection.query ('select * from likes where (user_id = ? and post_id =? )' , [userId,postId],
     
         function (err, results) {
 
             if (results.length === 0) {
            
-                connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[req.params.user_id, req.params.post_id, false, true],
+                connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[userId, postId, false, true],
+
+                
 
                     function (err, results) {
 
@@ -192,13 +185,13 @@ exports.dislikePost = (req, res, next) => {
                 
             }else{   
 
-                connection.query('update likes set user_id = ? , post_id = ? , likes = ? , dislike = ? where user_id = ? and post_id = ? ', [req.params.user_id , req.params.post_id , false, true ,req.params.user_id,req.params.post_id ],
+                connection.query('update likes set user_id = ? , post_id = ? , likes = ? , dislike = ? where user_id = ? and post_id = ? ', [userId, postId , false, true ,userId,postId ],
                             
                     function (err,results){
                     
-                        return res.status(200).json({message:"Like mis à jour", results});
+                        return res.status(200).json({message:"post déja disliker", results});
                         
-                     })                 
+                    })                 
             }
         }
 )};
@@ -207,7 +200,10 @@ exports.dislikePost = (req, res, next) => {
 /* ***** Reset du like dislikes ***** */
 exports.resetLikes = (req, res, next) => {
 
-    connection.query ('delete from likes where (user_id = ? and post_id = ?)' , [req.params.user_id,req.params.post_id],
+    const postId = req.body.postId
+    const userId = req.body.userId
+
+    connection.query ('delete from likes where (user_id = ? and post_id = ?)' , [userId,postId],
 
         function (err, results) {
       
