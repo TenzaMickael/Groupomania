@@ -1,14 +1,25 @@
-// On importe les identifiants de la bdd mysql 
+
+/* ***** CONTROLLEUR USERS.JS ***** */
+
+
+// On importe le middleware "connect.bdd.js" 
 const connection = require('../middleware/connect.bdd');
 
+
+// On importe le package "bcrypt"
 const bcrypt = require('bcrypt');
 
+
+// On importe la package "jsonwebtoken"
 const jwt = require('jsonwebtoken');
 
+
+// On utilise "dotenv" pour récupérer les identifiant de mysql 
 require('dotenv').config();
 
 
-/* Création d'un users  */
+/* ***** Création d'un users *****  */
+
 exports.signup = (req,res,next) => {
 
     const emailHash = Buffer.from(req.body.email).toString('hex');
@@ -20,17 +31,22 @@ exports.signup = (req,res,next) => {
         function(err, results) {
 
             if (err) {
-                return res.status(500).json({message:"Utilisateur non crée" , results})
+
+                return res.status(500).json({message:"Utilisateur non crée" , results});
+
             }else{
+
                 return res.status(201).json({message:"Utilisateur crée" , results });
             }
         })
     })
+
     .catch(error => res.status(400).json({ error }));
 };
 
 
 /* ***** Connection d'un utilisateur ***** */
+
 exports.login = (req, res, next) => {
 
     const emailHash = Buffer.from(req.body.email).toString('hex');
@@ -42,7 +58,7 @@ exports.login = (req, res, next) => {
           
             if (results.length === 0) {
                 
-                 return res.status(404).json({message: "L'utilisateur n'existe pas" , error:err}) 
+                 return res.status(404).json({message: "L'utilisateur n'existe pas" , error:err}); 
                 
             }
 
@@ -57,7 +73,7 @@ exports.login = (req, res, next) => {
                     
                     if(!valid) {
 
-                        return res.status(500).json({    message: "L'utilisateur et le mot de passe ne correspondent pas"})
+                        return res.status(500).json({    message: "L'utilisateur et le mot de passe ne correspondent pas"});
                     }
 
                     console.log('id', results[0].id);
@@ -74,15 +90,19 @@ exports.login = (req, res, next) => {
                     });  
                 
                 })
+
                 .catch(() => {
-                    return res.status(500).json({message:"Une erreur s'est produite"});       
+
+                    return res.status(500).json({message:"Une erreur s'est produite"});    
+
                 })
         })
-}
+};
          
 
 
 /* ***** Recherche de tout les utilisateurs ***** */ 
+
 exports.getAllUsers = (req, res, next) => {
 
     connection.query('select * from users' ,
@@ -91,14 +111,14 @@ exports.getAllUsers = (req, res, next) => {
 
             if (results.length ===0) {
 
-                return res.status(404).json({message:"Aucun utilisateurs" , error:err})
+                return res.status(404).json({message:"Aucun utilisateurs" , error:err});
 
             }else { 
 
-                return res.status(200).json({message:"Utilisateurs trouvé " , results})
+                return res.status(200).json({message:"Utilisateurs trouvé " , results});
             }
         });
-}
+};
 
 
 /* ***** Modification d'un utilisateur ***** */
@@ -127,7 +147,7 @@ exports.modifyUser = (req, res, next) => {
                    
                     if (err ){
 
-                        return res.status(500).json({message:"utilisateur non modifié" , error:err})
+                        return res.status(500).json({message:"utilisateur non modifié" , error:err});
 
                     }else{
 
@@ -136,20 +156,20 @@ exports.modifyUser = (req, res, next) => {
                     }
                 })
             })
-            .catch(error => res.status(400).json({ error }));
 
+            .catch(error => res.status(400).json({ error }));
         }
     })
 };
 
 
 /* ***** Suppression d'un utilisateur ***** */
+
 exports.deleteUser = (req, res, next) => {
 
     const userId = req.body.userId
 
     connection.query ('select id from users where id = ? ', [userId],
-
 
     function (err,results){
       
@@ -166,17 +186,16 @@ exports.deleteUser = (req, res, next) => {
 
                 if (err) {
 
-                    return res.status(500).json({message:"Utilisateur non supprimé" , error:err})
+                    return res.status(500).json({message:"Utilisateur non supprimé" , error:err});
 
                 }else {
 
-                    return res.status(200).json({message:"Utilisateur supprimer" , results})
+                    return res.status(200).json({message:"Utilisateur supprimer" , results});
                 }
             })
-    
         }
     })
-}
+};
 
 
 

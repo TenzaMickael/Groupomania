@@ -1,4 +1,8 @@
-// On importe les identifiants de la bdd mysql 
+
+/* ***** CONTROLLEUR POSTS.JS ***** */
+
+
+// On importe le middleware "connect.bdd.js" 
 const connection = require('../middleware/connect.bdd');
 
 
@@ -14,17 +18,18 @@ exports.createPost = (req, res, next) => {
 
             if (err) {
 
-                return res.status(500).json({ message:"Post non crée" , error:err })
+                return res.status(500).json({ message:"Post non crée" , error:err });
 
             }else {
 
                 return res.status(201).json({message:"Post crée" , results});
             }
-        });
+        })
 };
 
 
 /* ***** Recherche de tout les posts ***** */ 
+
 exports.getAllPosts = (req, res, next) => {
 
     connection.query('select * from posts',
@@ -33,18 +38,19 @@ exports.getAllPosts = (req, res, next) => {
 
             if (results.length === 0) {
 
-                return res.status(404).json({message:"Aucun posts" , error:err})
+                return res.status(404).json({message:"Aucun posts" , error:err});
 
             }else {
 
-                return res.status(200).json({message:"les différents post ont été trouvé " , results})
+                return res.status(200).json({message:"les différents post ont été trouvé " , results});
 
             }
-        });
+        })
 };
 
 
 /* ***** Recherche d'un post ***** */
+
 exports.getOnePost = (req, res, next) => {
 
     connection.query('select * from posts where id = ? ', [req.params.id],
@@ -53,31 +59,31 @@ exports.getOnePost = (req, res, next) => {
 
             if (results.length === 0) {
             
-                return res.status(404).json({message:"Post non trouvé" , error:err}) 
+                return res.status(404).json({message:"Post non trouvé" , error:err});
 
             }else{
 
-                return res.status(200).json({message:"Post trouvé" , results})
+                return res.status(200).json({message:"Post trouvé" , results});
 
             }
-        });
+        })
 };
 
 
 /* ***** Modification d'un post ***** */ 
+
 exports.modifyPost = (req, res, next) => {
 
   const postId= req.body.postId;
   const userId = req.body.userId;
      
-
 connection.query ('update posts set title = ?, publication = ? where id= ? and user_id = ?', [req.body.title, req.body.publication,postId,userId],
 
     function (err,results) {
                    
         if (results.affectedRows == 0){
 
-            return res.status(500).json({message:"post non modifié" , error:err})
+            return res.status(500).json({message:"post non modifié" , error:err});
 
         }else{
 
@@ -85,44 +91,33 @@ connection.query ('update posts set title = ?, publication = ? where id= ? and u
 
         }
     })          
-}
+};
     
 
-
-
-
-
 /* ***** Suppression d'un post ***** */
+
 exports.deletePost = (req, res, next) => {
     const postId = req.body.postId;
     const userId = req.body.userId;
 
-   
+    connection.query('delete from posts where id = ? and user_id = ?',[postId,userId],
 
+        function (err, results) {
 
+            if (results.affectedRows == 0) {
 
-            connection.query('delete from posts where id = ? and user_id = ?',[postId,userId],
+                return res.status(500).json({message:"Post non supprimé" , error:err});
 
-            function (err, results) {
+            }else {
 
-                if (results.affectedRows == 0) {
-
-                    return res.status(500).json({message:"Post non supprimé" , error:err})
-
-                }else {
-
-                    return res.status(200).json({message:"Post supprimer" , results})
-                }
-            })
-    
-}
-
-
-
-
+                return res.status(200).json({message:"Post supprimer" , results})
+            }
+        })
+};
 
 
 /* ***** Like d'un post ***** */
+
 exports.likePost = (req, res, next) => {
 
     const postId = req.body.postId
@@ -157,10 +152,11 @@ exports.likePost = (req, res, next) => {
                     })                 
             }
         }
-)}
+)};
 
 
 /* ***** Dislike d'un post ***** */
+
 exports.dislikePost = (req, res, next) => {
 
     const postId = req.body.postId
@@ -174,8 +170,6 @@ exports.dislikePost = (req, res, next) => {
             if (results.length === 0) {
            
                 connection.query('insert into likes (user_id,post_id,likes,dislikes) values (?,?,?,?)',[userId, postId, false, true],
-
-                
 
                     function (err, results) {
 
@@ -198,6 +192,7 @@ exports.dislikePost = (req, res, next) => {
 
 
 /* ***** Reset du like dislikes ***** */
+
 exports.resetLikes = (req, res, next) => {
 
     const postId = req.body.postId
@@ -209,11 +204,11 @@ exports.resetLikes = (req, res, next) => {
       
             if (results.affectedRows == 0) {
           
-                return res.status(500).json({message:"Avis non supprimé " , error:err})
+                return res.status(500).json({message:"Avis non supprimé " , error:err});
 
             }else{
           
-                return res.status(200).json({message:"Avis réinitialisé" , results})
+                return res.status(200).json({message:"Avis réinitialisé" , results});
 
             }
     }

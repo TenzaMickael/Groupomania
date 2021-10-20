@@ -1,4 +1,5 @@
-/* **********FICHIER app.js CONTIENT NOTRE APPLICATION********** */
+
+/* ***** NOTRE APPLICATION APP.JS ***** */
 
 
 //* *****Import des packages***** *//
@@ -26,6 +27,9 @@ const userRoutes = require('./routes/users');
 // On importe la route dédié aux commentaires 
 const commentRoutes = require('./routes/comments');
 
+// On importe la route dédié à l'admin
+const adminRoutes = require('./routes/admin');
+
 
 // Création d'une application express   
 const app = express();
@@ -35,10 +39,12 @@ app.use(helmet());
 
 // Middleware Header qui permet à toutes les demandes de toutes les origines d'accéder à l'API
 app.use((req, res, next) => {
+
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
+    
 });
 
 // Middleware qui permet de transformer le corp de la requête en un objet JSON utilisable
@@ -53,6 +59,9 @@ app.use('/api/users', userRoutes);
 
 // Route dédiés aux commentaires
 app.use('/api/comments' , commentRoutes);
+
+// Route dédiés a l'admin 
+app.use('/api/admin' , adminRoutes);
 
 
 // Export de l'application express pour y accéder depuis server.js

@@ -1,8 +1,13 @@
-// On importe les identifiants de la bdd mysql 
+
+/* ***** CONTROLLEUR COMMENTS.JS ***** */
+
+
+// On importe le middleware "connect.bdd.js" 
 const connection = require('../middleware/connect.bdd');
 
 
 /* ***** Création d'un commentaire ***** */ 
+
 exports.createComment = (req, res, next) => {
 
     const userId = req.body.userId;
@@ -14,13 +19,13 @@ exports.createComment = (req, res, next) => {
 
             if (err) {
 
-                return res.status(500).json({ message:"Commentaire non crée" , error:err })
+                return res.status(500).json({ message:"Commentaire non crée" , error:err });
 
             }else{
 
                 return res.status(201).json({message:"Commentaire crée" , results});
             }
-        });
+        })
 };
 
 
@@ -35,54 +40,54 @@ exports.getAllComments = (req, res, next) => {
 
             if (results.length ===0) {
 
-                return res.status(404).json({message:"Aucun commentaire" , error:err})
+                return res.status(404).json({message:"Aucun commentaire" , error:err});
 
             }else{
 
-                return res.status(200).json({message:"les différents commentaires ont été trouvé " , results})
+                return res.status(200).json({message:"les différents commentaires ont été trouvé " , results});
 
             }
-        });
-}
+        })
+};
 
 
 /* ***** Recherche d'un commentaire ***** */
 
 exports.getOneComment = (req, res, next) => {
 
-    connection.query('select * from comments where id = ?  ', [req.params.id],
+    connection.query('select * from comments where id = ? ', [req.params.id],
 
         function (err, results) {
 
             if (results.length === 0) {
             
-                return res.status(404).json({message:"Commentaire non trouvé", error:err}) 
+                return res.status(404).json({message:"Commentaire non trouvé", error:err}); 
 
             }else{
 
-                return res.status(200).json({message:"Commentaire trouvé", results})
+                return res.status(200).json({message:"Commentaire trouvé", results});
 
             }
-        });
+        })
 };
 
 
 /* ***** Modification d'un commentaire ***** */ 
+
 exports.modifyComment = (req, res, next) => {
 
     const userId = req.body.userId;
-
 
     connection.query ('update comments set content = ?  where user_id = ? and id = ? ', [req.body.content,userId,req.body.id],
 
         function (err, results) {
 
             if (results.affectedRows == 0 ) {
-console.log(results)
-                return res.status(500).json({message:"Commentaire non modifié" , error:err})
+
+                return res.status(500).json({message:"Commentaire non modifié" , error:err});
 
             }else{
-                console.log(results)
+                
                 return res.status(200).json({ message:"Commentaire modifié" , results}); 
             }  
         })
@@ -101,20 +106,21 @@ exports.deleteComment = (req, res, next) => {
 
             if (results.affectedRows == 0) {
 
-                return res.status(500).json({message:"Commentaire non supprimé" , error:err})
+                return res.status(500).json({message:"Commentaire non supprimé" , error:err});
  
             }else{
 
-                return res.status(200).json({message:"Commentaire supprimer" , results})
+                return res.status(200).json({message:"Commentaire supprimer" , results});
 
             }
         })
-}
+};
 
 
 
 
 /* ***** Like d'un post ***** */
+
 exports.likeComment = (req, res, next) => {
 
     const commentId = req.body.commentId
@@ -129,7 +135,7 @@ exports.likeComment = (req, res, next) => {
                 connection.query('insert into likes (user_id,comment_id,likes,dislikes) values (?,?,?,?)',[userId, commentId,  true, false],
 
                     function (err, results) {
-                        console.log(results)
+                       
                         return res.status(200).json({message :" Commentaire liké " , results});
                     
                     })
@@ -139,17 +145,17 @@ exports.likeComment = (req, res, next) => {
                 connection.query('update likes set user_id = ? , comment_id = ? , likes = ? , dislike = ? where user_id = ? and comment_id = ? ', [userId , commentId , true, false , userId, commentId ],
                             
                     function (err,results){
-                        console.log(results)
+                       
                         return res.status(200).json({message:"Commentaire déja liker", results});
-                        
                         
                     })                 
             }
         }
-)}
+);}
 
 
 /* ***** Dislike d'un post ***** */
+
 exports.dislikeComment = (req, res, next) => {
 
     const commentId = req.body.commentId
@@ -184,6 +190,7 @@ exports.dislikeComment = (req, res, next) => {
 
 
 /* ***** Reset du like dislikes ***** */
+
 exports.resetLikes = (req, res, next) => {
 
     const commentId = req.body.commentId
@@ -195,11 +202,11 @@ exports.resetLikes = (req, res, next) => {
       
             if (results.affectedRows == 0) {
           
-                return res.status(500).json({message:"Avis non supprimé " , error:err})
+                return res.status(500).json({message:"Avis non supprimé " , error:err});
 
             }else{
           
-                return res.status(200).json({message:"Avis réinitialisé" , results})
+                return res.status(200).json({message:"Avis réinitialisé" , results});
 
             }
     }
