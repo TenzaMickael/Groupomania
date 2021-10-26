@@ -7,11 +7,11 @@ class UserDataService {
     }
 
     get(id) {
-        return http.get(`/users/${id}`);
+        return http.get(`/users/login/${id}`);
     }
 
     create(data) {
-        return http.post("/users",data);
+        return http.post("/users/signup",data);
     }
 
     update(id, data) {

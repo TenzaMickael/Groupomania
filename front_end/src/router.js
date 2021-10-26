@@ -7,22 +7,24 @@ export default new Router({
     mode: "history",
     routes: [
         {
+            path: "/signup",
+            name: "add-users",
+            component: () => import("./components/AddUsers")
+        },
+
+        {
             path: "/",
             alias:"/users",
-            name: "users",
+            name: "users-list",
             component: () => import("./components/UsersList")
         },
 
         {
-            path: "/users/:id",
+            path: "/users/login",
             name: "users-details",
             component: () => import("./components/Users")
         },
 
-        {
-            path: "/add",
-            name: "add",
-            component: () => import("./components/AddUsers")
-        }
+      
     ]
 });

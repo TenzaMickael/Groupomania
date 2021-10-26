@@ -1,5 +1,7 @@
 <template>
     <div class="submit-form">
+
+    <h4> Créer un users </h4>
         <div v-if="!submitted">
 
             <div class="form-group">
@@ -17,7 +19,7 @@
             <div class="form-group">
                 <label for="email"> Email </label>
                 <input
-                    type="text"
+                    type="mail"
                     class="form-control"
                     id="email"
                     required
@@ -38,12 +40,12 @@
                 />
             </div>
 
-            <button @click="saveUser" class="btn btn-success">Submit</button>
+            <button @click="saveUser" class="btn btn-success">Valider</button>
         </div>
 
         <div v-else>
-      <h4>You submitted successfully!</h4>
-      <button class="btn btn-success" @click="newUser">Add</button>
+      <h4>Create user success !</h4>
+      <button class="btn btn-success" @click="newUser"> Connection </button>
     </div>
   </div>
 </template>
@@ -60,8 +62,8 @@ export default {
                 id:null,
                 pseudo:"",
                 email:"",
-                password:"",
-                published: false
+                password:""
+            
 
             },
             submitted: false
@@ -78,8 +80,9 @@ export default {
 
             UserDataService.create(data)
                 .then(response => {
-                    this.users.id = response.data.id;
-                    console.log(response.data);
+                    this.users.id = response.data.results.insertId;
+                 
+           
                     this.submitted = true;
                 })
                 .catch(e => {
