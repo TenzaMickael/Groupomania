@@ -1,30 +1,38 @@
 <template>
 
- <div class="submit-form">
+    <div class="submit-form">
 
-     <h4>User</h4>
+        <h4>Connection</h4>
 
-      <div v-if="!submitted">
+        <div v-if="!submitted">
   
    
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email"
-        v-model="users.email"
-        />
-      </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email"
+                v-model="users.email"/>
+            </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="text" class="form-control" id="password"
-          v-model="users.password"
-        />
-      </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="text" class="form-control" id="password"
+                v-model="users.password"/>
+            </div>
 
-       <button @click="connectUser" class="btn btn-success">Connection</button>
-   </div>
- </div>
+            <button @click="connectUser" class="btn btn-success">Connection</button>
 
+           
+
+            <h6 class ="notif"> Pas de compte ?
+        
+                <router-link :to="{ name: 'add-users'}">S'incrire</router-link>
+        
+            </h6>
+        </div>
+
+        
+    </div>
+  
 </template>
 
 <script>
@@ -40,7 +48,6 @@ export default {
                 id:"",
                 email:"",
                 password:""
-            
             },
             submitted: false
         };
@@ -49,21 +56,37 @@ export default {
     methods: {
         connectUser() {
             var data = {
+
                 id: this.users.id,
                 email: this.users.email,
                 password: this.users.password
             };
 
-            UserDataService.get(data)
+            UserDataService.login(data)
+
+            
                 .then(response => {
-                
-                    this.users.id = response.data.results.insertId;
                  
+                
+                    this.users.id = response.data.userId;
+                    this.users.id = response.data.message;
+                    this.users.id = response.data.token;
+
+                    sessionStorage.setItem('token',response.data.token);
+                    sessionStorage.setItem('userId',response.data.userId);
+                
+                    this.$router.push('/posts')
+
            
                     this.submitted = true;
+
+                   
                 })
-                .catch(e => {
-                    console.log(e);
+                .catch(response => {
+                  
+                 console.log(response)
+                    
+    
                 });
         },
 
@@ -76,5 +99,11 @@ export default {
 .submit-form {
   max-width: 300px;
   margin: auto;
+}
+
+
+.notif {
+
+    margin-top:2em;
 }
 </style>

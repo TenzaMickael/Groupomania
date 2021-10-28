@@ -4,6 +4,8 @@
 
      <li class="nav-item">
          <router-view></router-view>
+
+
     </li>
 
   </div>

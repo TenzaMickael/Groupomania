@@ -1,52 +1,41 @@
 <template>
     <div class="submit-form">
 
-        <h4> Création d'un compte </h4>
+        <h4> Créer un post </h4>
             <div v-if="!submitted">
 
                 <div class="form-group">
-                    <label for="pseudo">pseudo</label>
+                    <label for="title">Titre</label>
                     <input
                         type="text"
                         class="form-control"
-                        id="pseudo"
+                        id="title"
                         required
-                        v-model="users.pseudo"
-                        name="pseudo"
+                        v-model="posts.title"
+                        name="title"
                     />
                 </div>
 
                 <div class="form-group">
-                    <label for="email"> Email </label>
-                    <input
-                        type="mail"
-                        class="form-control"
-                        id="email"
-                        required
-                        v-model="users.email"
-                        name="email"   
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label for="password"> Password </label>
+                    <label for="publication"> publication </label>
                     <input
                         type="text"
                         class="form-control"
-                        id="password"
+                        id="publication"
                         required
-                        v-model="users.password"
-                        name="password"   
+                        v-model="posts.publication"
+                        name="publication"   
                     />
                 </div>
 
-                <button @click="saveUser" class="btn btn-success">Valider</button>
+               
+                <button @click="savePost" class="btn btn-success">Valider</button>
 
     </div>
 
     <div v-else>
 
-      <h6 class="confirm_creation">  Compte crée ! !</h6>
+      <h6 class="confirm_creation">  Posts crée ! !</h6>
 
       <button class="btn btn-success"><router-link id="router_link_connection" :to="{ name: 'users-connection'}">Connections</router-link>
 
@@ -59,44 +48,51 @@
 </template>
 
 <script>
-import UserDataService from "../services/UserDataService";
+import PostDataService from "../services/PostDataService";
 
 export default {
 
-    name:"Add-Users",
+    name:"Add-Posts",
     data() {
         return {
-            users: {
+            posts: {
                 id:null,
-                pseudo:"",
-                email:"",
-                password:""
-            
-
+                title:"",
+                publication:"",
+                userId:""
             },
             submitted: false
         };
     },
 
     methods: {
-        saveUser() {
+        savePost() {
             var data = {
-                pseudo: this.users.pseudo,
-                email: this.users.email,
-                password: this.users.password
+                title: this.posts.title,
+                publication: this.posts.publication,
+                userId:sessionStorage.getItem('userId'),
+               
             };
 
-            UserDataService.create(data)
-                .then(response => {
-                    this.users.id = response.data.results.insertId;
-                 
+let token = sessionStorage.getItem('token')
+            
+            PostDataService.create(data,token)
            
+                .then(response => {
+                    console.log(data)
+
+                    this.title = response.data.title;
+                    this.publication = response.data.publication;
+                 
+       
                     this.submitted = true;
 
                  
                 })
                 .catch(e => {
+                   
                     console.log(e);
+                    
                 });
         },
 
