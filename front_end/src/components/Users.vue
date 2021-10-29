@@ -75,7 +75,7 @@ export default {
                     sessionStorage.setItem('token',response.data.token);
                     sessionStorage.setItem('userId',response.data.userId);
                 
-                    this.$router.push('/posts')
+                    this.$router.push('/all-posts')
 
            
                     this.submitted = true;

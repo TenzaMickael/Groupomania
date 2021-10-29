@@ -22,7 +22,15 @@ export default new Router({
         },
 
         {
-            path: '/posts',
+            path: '/all-posts',
+            name: 'all-posts',
+            components: () => import ('./components/PostsList')
+        },
+
+       
+
+        {
+            path: '/add_posts',
             name: 'add-posts',
             component: () => import('./components/AddPosts')
         },

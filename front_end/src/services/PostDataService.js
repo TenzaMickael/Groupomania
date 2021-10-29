@@ -10,6 +10,12 @@ class PostDataService {
         });
     }
 
+    
+    getAll() {
+        return http.get('/all-posts');
+    }
+
+
 
 }
 
