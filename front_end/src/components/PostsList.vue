@@ -57,7 +57,7 @@ export default {
     name: "all-posts",
     data() {
         return {
-            post: [],
+            posts: [],
             currentPosts:null,
             currentIndex: -1,
             title:""
