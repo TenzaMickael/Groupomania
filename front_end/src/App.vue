@@ -3,10 +3,9 @@
     <h1> Groupomania </h1>
 
      <li class="nav-item">
-         <router-view></router-view>
-    
-  
-
+         <router-view>
+ 
+         </router-view>
 
     </li>
 

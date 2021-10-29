@@ -30,6 +30,7 @@
             </h6>
         </div>
 
+       
         
     </div>
   
@@ -74,13 +75,10 @@ export default {
 
                     sessionStorage.setItem('token',response.data.token);
                     sessionStorage.setItem('userId',response.data.userId);
-                
-                    this.$router.push('/all-posts')
-
-           
+            
                     this.submitted = true;
 
-                   
+                   // this.$router.push('/all-posts')
                 })
                 .catch(response => {
                   

@@ -7,6 +7,7 @@ export default new Router({
     mode: "history",
     routes: [
 
+        // USERS //
         {
             path: '/',
             alias:'login',
@@ -21,20 +22,25 @@ export default new Router({
             component: () => import('./components/AddUsers')
         },
 
+
+
+
+        // POSTS //
         {
             path: '/all-posts',
             name: 'all-posts',
-            components: () => import ('./components/PostsList')
+            component: () => import ('./components/PostsList')
         },
-
        
-
         {
             path: '/add_posts',
             name: 'add-posts',
             component: () => import('./components/AddPosts')
         },
 
+
+
+        // COMMENTAIRES
         {
             path: '/comments',
             name: 'add-comments',
