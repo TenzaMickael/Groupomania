@@ -78,7 +78,7 @@ export default {
             
                     this.submitted = true;
 
-                   // this.$router.push('/all-posts')
+                    this.$router.push('/all-posts')
                 })
                 .catch(response => {
                   

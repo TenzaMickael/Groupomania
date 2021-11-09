@@ -3,7 +3,7 @@ import http from "../http-common";
 class PostDataService {
 
     create(data,token) {
-        return http.post('/posts',data,{
+        return http.post('/posts/create/',data,{
             headers:{
                 authorization: "Bearer " + token
             }
@@ -11,8 +11,20 @@ class PostDataService {
     }
 
     
-    getAll() {
-        return http.get('/all-posts');
+    getAll(token,userId) {
+        return http.post('/posts/', userId,  {
+            headers:{
+                authorization: "Bearer " + token
+            }
+        });
+    }
+
+    getOne(token,userId) {
+        return http.post('/posts/:id', userId,  {
+            headers:{
+                authorization: "Bearer " + token
+            }
+        });
     }
 
 

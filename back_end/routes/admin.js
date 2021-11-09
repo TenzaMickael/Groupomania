@@ -16,7 +16,7 @@ const adminCtrl = require('../controllers/admin');
 
 
 // Créer un utilisateur
-router.post('/', authAdmin , adminCtrl.addUser);
+router.post('/create', authAdmin , adminCtrl.addUser);
 
 //Supprimer un utilisateur
 router.delete('/users', authAdmin, adminCtrl.deleteUsers);
