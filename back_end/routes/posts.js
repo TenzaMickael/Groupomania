@@ -17,13 +17,13 @@ const postCtrl = require('../controllers/posts');
 
 
 // Créer un post
-router.post('/', auth, postCtrl.createPost);
+router.post('/create', auth, postCtrl.createPost);
 
 //Recherche tout les posts
-router.get('/', postCtrl.getAllPosts);
+router.post('/', auth, postCtrl.getAllPosts);
 
 //Recherche un post
-router.get('/:id', postCtrl.getOnePost);
+router.post('/:id',auth,  postCtrl.getOnePost);
 
 //Modifie un post
 router.put('/', auth, postCtrl.modifyPost);

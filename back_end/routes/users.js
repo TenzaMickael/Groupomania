@@ -23,7 +23,7 @@ router.post('/signup', userCtrl.signup);
 router.post('/login', userCtrl.login);
 
 //recherche tous les utilisateurs
-router.get('/',userCtrl.getAllUsers);
+router.post('/', auth, userCtrl.getAllUsers);
 
 //Modifie un utilisateur
 router.put('/', auth, userCtrl.modifyUser);

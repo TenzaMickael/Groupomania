@@ -32,7 +32,8 @@ exports.createPost = (req, res, next) => {
 
 exports.getAllPosts = (req, res, next) => {
 
-    connection.query('select * from posts',
+
+    connection.query('select * from posts ',(req.body.userId),
  
         function (err, results) {   
 

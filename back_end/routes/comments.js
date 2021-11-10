@@ -17,13 +17,13 @@ const commentCtrl = require('../controllers/comments');
 
 
 // Créer un  commentaire
-router.post('/', auth, commentCtrl.createComment);
+router.post('/create', auth, commentCtrl.createComment);
 
 //Recherche tout les commentaires
-router.get('/' , commentCtrl.getAllComments);
+router.post('/' , auth, commentCtrl.getAllComments);
 
 //Recherche un commentaire
-router.get('/:id' , commentCtrl.getOneComment);
+router.post('/:id' , auth,  commentCtrl.getOneComment);
 
 //Modifie un commentaire
 router.put('/', auth, commentCtrl.modifyComment);
