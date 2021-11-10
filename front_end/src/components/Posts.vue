@@ -17,7 +17,6 @@ export default {
 
     name:"one-post",
 
-
      data() {
         return {
             post: {
